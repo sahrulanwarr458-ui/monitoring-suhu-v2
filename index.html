@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Smart Incubator Dashboard</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🐣 SMART INCUBATOR</h1>
+
+    <!-- SUHU -->
+    <div class="card big">
+        <h2>Suhu Real-time</h2>
+        <canvas id="tempChart"></canvas>
+    </div>
+
+    <!-- STATUS -->
+    <div class="grid">
+
+        <div class="card status-card">
+            <h3>💡 Lampu</h3>
+            <div id="lampu" class="status-badge off">
+                OFF
+            </div>
+        </div>
+
+        <div class="card status-card">
+            <h3>🌀 Kipas</h3>
+            <div id="kipas" class="status-badge off">
+                OFF
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Setpoint LOW</h3>
+            <div id="lowVal">--</div>
+        </div>
+
+        <div class="card">
+            <h3>Setpoint HIGH</h3>
+            <div id="highVal">--</div>
+        </div>
+
+    </div>
+
+    <!-- CONTROL -->
+    <div class="card">
+        <h2>Kontrol Suhu</h2>
+
+        <div class="input-group">
+            <input type="number" id="setLow" step="0.1" placeholder="Set LOW">
+            <button onclick="kirimLow()">Kirim</button>
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="setHigh" step="0.1" placeholder="Set HIGH">
+            <button onclick="kirimHigh()">Kirim</button>
+        </div>
+    </div>
+
+    <div id="status">Connecting...</div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

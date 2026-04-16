@@ -1,0 +1,93 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.big {
+    height: 300px;
+}
+
+.status-badge {
+    padding: 12px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+/* ON */
+.on {
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    box-shadow: 0 0 20px #22c55e;
+}
+
+/* OFF */
+.off {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    box-shadow: 0 0 15px #ef4444;
+}
+
+/* FAN ANIMATION */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    flex: 1;
+}
+
+button {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#status {
+    text-align: center;
+    margin-top: 15px;
+}

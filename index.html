@@ -2,70 +2,96 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Smart Incubator Dashboard</title>
+<title>Smart Incubator Pro</title>
+
 <link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>🐣 SMART INCUBATOR</h1>
+<h1>🐣 SMART INCUBATOR PRO</h1>
 
-    <!-- SUHU -->
-    <div class="card big">
-        <h2>Suhu Real-time</h2>
-        <canvas id="tempChart"></canvas>
+<!-- SUHU -->
+<div class="card">
+    <div id="tempValue" class="temp-display">-- °C</div>
+</div>
+
+<!-- REALTIME -->
+<div class="card">
+    <canvas id="tempChart"></canvas>
+</div>
+
+<!-- HISTORY -->
+<div class="card history">
+    <canvas id="historyChart"></canvas>
+</div>
+
+<!-- STATUS -->
+<div class="grid">
+
+<div class="card">
+    <h3>Lampu</h3>
+    <div id="lampu" class="status-badge off">OFF</div>
+</div>
+
+<div class="card">
+    <h3>Kipas</h3>
+    <div id="kipas" class="status-badge off">OFF</div>
+</div>
+
+<div class="card">
+    <h3>LOW</h3>
+    <div id="lowVal">--</div>
+</div>
+
+<div class="card">
+    <h3>HIGH</h3>
+    <div id="highVal">--</div>
+</div>
+
+</div>
+
+<!-- MODE -->
+<div class="card">
+    <h3>Mode</h3>
+    <div class="mode-toggle">
+        <button id="autoBtn" onclick="setMode('AUTO')">AUTO</button>
+        <button id="manualBtn" onclick="setMode('MANUAL')">MANUAL</button>
     </div>
+    <div id="modeStatus">Mode: --</div>
+</div>
 
-    <!-- STATUS -->
-    <div class="grid">
+<!-- MANUAL CONTROL -->
+<div class="card">
+    <h3>Kontrol Manual</h3>
 
-        <div class="card status-card">
-            <h3>💡 Lampu</h3>
-            <div id="lampu" class="status-badge off">
-                OFF
-            </div>
-        </div>
+    <button onclick="kontrolLampu('ON')">Lampu ON</button>
+    <button onclick="kontrolLampu('OFF')">Lampu OFF</button>
 
-        <div class="card status-card">
-            <h3>🌀 Kipas</h3>
-            <div id="kipas" class="status-badge off">
-                OFF
-            </div>
-        </div>
+    <br>
 
-        <div class="card">
-            <h3>Setpoint LOW</h3>
-            <div id="lowVal">--</div>
-        </div>
+    <button onclick="kontrolKipas('ON')">Kipas ON</button>
+    <button onclick="kontrolKipas('OFF')">Kipas OFF</button>
+</div>
 
-        <div class="card">
-            <h3>Setpoint HIGH</h3>
-            <div id="highVal">--</div>
-        </div>
+<!-- SETPOINT -->
+<div class="card">
+    <h3>Set Suhu</h3>
 
-    </div>
+    <input id="setLow" type="number" placeholder="Set LOW">
+    <button onclick="kirimLow()">Kirim LOW</button>
 
-    <!-- CONTROL -->
-    <div class="card">
-        <h2>Kontrol Suhu</h2>
+    <input id="setHigh" type="number" placeholder="Set HIGH">
+    <button onclick="kirimHigh()">Kirim HIGH</button>
+</div>
 
-        <div class="input-group">
-            <input type="number" id="setLow" step="0.1" placeholder="Set LOW">
-            <button onclick="kirimLow()">Kirim</button>
-        </div>
-
-        <div class="input-group">
-            <input type="number" id="setHigh" step="0.1" placeholder="Set HIGH">
-            <button onclick="kirimHigh()">Kirim</button>
-        </div>
-    </div>
-
-    <div id="status">Connecting...</div>
+<div id="status">Connecting...</div>
 
 </div>
 

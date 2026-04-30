@@ -4,157 +4,62 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Incubator Pro Dashboard</title>
+
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
 <div class="container">
-    <!-- Header -->
+
     <div class="header">
-        <div class="title-section">
-            <h1>🥚 SMART INCUBATOR PRO</h1>
-            <p class="subtitle">Real-time Monitoring & Control System</p>
+        <h1>🥚 SMART INCUBATOR</h1>
+        <div id="currentTime"></div>
+        <div id="connectionStatus" class="connection-badge offline">OFFLINE</div>
+    </div>
+
+    <div class="card">
+        <button id="autoModeBtn">AUTO</button>
+        <button id="manualModeBtn">MANUAL</button>
+        Mode: <span id="modeStatus">AUTO</span>
+    </div>
+
+    <div class="card">
+        <h2>Suhu: <span id="currentTemp">--</span> °C</h2>
+        <canvas id="tempChart"></canvas>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Lampu</h3>
+            <div id="lampu" class="status-badge off">OFF</div>
         </div>
-        <div class="time-section">
-            <div id="currentTime" class="time-display"></div>
-            <div id="connectionStatus" class="connection-badge offline">● OFFLINE</div>
+
+        <div class="card">
+            <h3>Motor (Auto)</h3>
+            <div id="kipas" class="status-badge off">OFF</div>
+            <small>Berjalan tiap 2 jam</small>
+        </div>
+
+        <div class="card">
+            LOW: <span id="lowVal">--</span>
+        </div>
+
+        <div class="card">
+            HIGH: <span id="highVal">--</span>
         </div>
     </div>
 
-    <!-- Mode Control Card -->
-    <div class="card mode-card">
-        <div class="card-header">
-            <h2>🎮 Control Mode</h2>
-            <div class="mode-toggle-container">
-                <button id="autoModeBtn" class="mode-btn active">AUTO MODE</button>
-                <button id="manualModeBtn" class="mode-btn">MANUAL MODE</button>
-            </div>
-        </div>
-        <div id="currentModeDisplay" class="mode-display">
-            Current Mode: <span id="modeStatus" class="mode-status auto">AUTO</span>
-        </div>
+    <div id="manualPanel" class="card" style="display:none;">
+        <button id="lampOnBtn">Lamp ON</button>
+        <button id="lampOffBtn">Lamp OFF</button>
+
+        <button disabled>AUTO MOTOR</button>
     </div>
 
-    <!-- Temperature Card -->
-    <div class="card big temp-card">
-        <div class="card-header">
-            <h2>🌡️ Temperature Monitoring</h2>
-            <div class="temp-indicator">
-                <span id="currentTemp" class="current-temp-value">--</span>
-                <span class="temp-unit">°C</span>
-            </div>
-        </div>
-        <div class="chart-container">
-            <canvas id="tempChart"></canvas>
-        </div>
-        <div class="chart-controls">
-            <button onclick="resetChart()" class="btn-secondary">Reset Chart</button>
-        </div>
-    </div>
-
-    <!-- Status Grid -->
-    <div class="grid status-grid">
-        <div class="card status-card">
-            <div class="status-icon">💡</div>
-            <div class="status-info">
-                <h3>Lampu Pemanas</h3>
-                <div id="lampu" class="status-badge off">OFF</div>
-            </div>
-        </div>
-
-        <div class="card status-card">
-            <div class="status-icon">🔄</div>
-            <div class="status-info">
-                <h3>Motor Steper Sirkulasi</h3>
-                <div id="kipas" class="status-badge off">OFF</div>
-            </div>
-        </div>
-
-        <div class="card status-card">
-            <div class="status-icon">⬇️</div>
-            <div class="status-info">
-                <h3>Setpoint Minimum</h3>
-                <div id="lowVal" class="setpoint-value">--</div>
-                <span class="unit">°C</span>
-            </div>
-        </div>
-
-        <div class="card status-card">
-            <div class="status-icon">⬆️</div>
-            <div class="status-info">
-                <h3>Setpoint Maksimum</h3>
-                <div id="highVal" class="setpoint-value">--</div>
-                <span class="unit">°C</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Manual Control Panel (only visible in MANUAL mode) -->
-    <div id="manualPanel" class="card manual-control-card" style="display: none;">
-        <div class="card-header">
-            <h2>🕹️ Manual Control Panel</h2>
-            <span class="control-badge">Manual Override Active</span>
-        </div>
-        <div class="manual-buttons">
-            <button id="lampOnBtn" class="manual-btn lamp-on">💡 Lampu ON</button>
-            <button id="lampOffBtn" class="manual-btn lamp-off">💡 Lampu OFF</button>
-            <button id="fanOnBtn" class="manual-btn fan-on">🌀 Kipas ON</button>
-            <button id="fanOffBtn" class="manual-btn fan-off">🌀 Kipas OFF</button>
-        </div>
-    </div>
-
-    <!-- Control Panel -->
-    <div class="card control-card">
-        <div class="card-header">
-            <h2>⚙️ Setpoint Control</h2>
-            <span class="control-badge">Temperature Settings</span>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-item">
-                <label>Setpoint LOW (°C)</label>
-                <div class="input-group">
-                    <input type="number" id="setLow" step="0.1" placeholder="Masukkan suhu minimum">
-                    <button onclick="kirimLow()" class="btn-primary">
-                        <span>✈️</span> Kirim
-                    </button>
-                </div>
-                <small class="input-hint">Suhu terendah untuk inkubator</small>
-            </div>
-
-            <div class="control-item">
-                <label>Setpoint HIGH (°C)</label>
-                <div class="input-group">
-                    <input type="number" id="setHigh" step="0.1" placeholder="Masukkan suhu maksimum">
-                    <button onclick="kirimHigh()" class="btn-primary">
-                        <span>✈️</span> Kirim
-                    </button>
-                </div>
-                <small class="input-hint">Suhu tertinggi untuk inkubator</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- System Status -->
-    <div class="card system-card">
-        <div class="system-status">
-            <div class="status-item">
-                <span class="status-label">📡 MQTT Broker:</span>
-                <span class="status-value">HiveMQ Cloud</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">🆔 Client ID:</span>
-                <span class="status-value" id="clientId">--</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">📊 Data Points:</span>
-                <span class="status-value" id="dataPoints">0</span>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script src="app.js"></script>

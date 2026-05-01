@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Incubator Pro Dashboard</title>
+<title>Smart Incubator Pro - Motor Stepper Control (2 Jam ON / 2 Jam OFF)</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,11 +16,46 @@
     <div class="header">
         <div class="title-section">
             <h1>🥚 SMART INCUBATOR PRO</h1>
-            <p class="subtitle">Real-time Monitoring & Control System</p>
+            <p class="subtitle">Real-time Monitoring & Control System | Motor: 2 Jam ON / 2 Jam OFF</p>
         </div>
         <div class="time-section">
             <div id="currentTime" class="time-display"></div>
-            <div id="connectionStatus" class="connection-badge offline">● OFFLINE</div>
+            <div class="status-group">
+                <div id="mqttStatus" class="connection-badge offline">● MQTT OFFLINE</div>
+                <div id="esp32Status" class="esp32-badge offline">🔴 ESP32 OFFLINE</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Summary Cards -->
+    <div class="grid status-summary">
+        <div class="card summary-card">
+            <div class="summary-icon">📡</div>
+            <div class="summary-info">
+                <h4>MQTT Broker</h4>
+                <div id="mqttStatusText" class="summary-status offline">Disconnected</div>
+            </div>
+        </div>
+        <div class="card summary-card">
+            <div class="summary-icon">🔌</div>
+            <div class="summary-info">
+                <h4>ESP32 Device</h4>
+                <div id="esp32StatusText" class="summary-status offline">Offline</div>
+            </div>
+        </div>
+        <div class="card summary-card">
+            <div class="summary-icon">⏱️</div>
+            <div class="summary-info">
+                <h4>Last Heartbeat</h4>
+                <div id="lastHeartbeat" class="summary-value">--:--:--</div>
+            </div>
+        </div>
+        <div class="card summary-card">
+            <div class="summary-icon">📊</div>
+            <div class="summary-info">
+                <h4>Uptime</h4>
+                <div id="uptime" class="summary-value">--</div>
+            </div>
         </div>
     </div>
 
@@ -29,12 +64,39 @@
         <div class="card-header">
             <h2>🎮 Control Mode</h2>
             <div class="mode-toggle-container">
-                <button id="autoModeBtn" class="mode-btn active">AUTO MODE</button>
+                <button id="autoModeBtn" class="mode-btn active">AUTO MODE (2H ON / 2H OFF)</button>
                 <button id="manualModeBtn" class="mode-btn">MANUAL MODE</button>
             </div>
         </div>
         <div id="currentModeDisplay" class="mode-display">
             Current Mode: <span id="modeStatus" class="mode-status auto">AUTO</span>
+        </div>
+    </div>
+
+    <!-- Motor Cycle Info Card -->
+    <div class="card cycle-card">
+        <div class="card-header">
+            <h2>🔄 Motor Stepper Cycle</h2>
+            <span class="cycle-badge active">2 HOURS ON / 2 HOURS OFF</span>
+        </div>
+        <div class="cycle-info">
+            <div class="cycle-item">
+                <span class="cycle-label">Current Phase:</span>
+                <span id="motorCyclePhase" class="cycle-value phase-off">OFF</span>
+            </div>
+            <div class="cycle-item">
+                <span class="cycle-label">Time Remaining in Current Phase:</span>
+                <span id="motorTimer" class="cycle-timer">--:--:--</span>
+            </div>
+            <div class="cycle-progress">
+                <div class="progress-label">
+                    <span>OFF Phase</span>
+                    <span>ON Phase</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="cycleProgressBar" class="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -66,28 +128,50 @@
         </div>
 
         <div class="card status-card">
-            <div class="status-icon">🌀</div>
+            <div class="status-icon">⚙️</div>
             <div class="status-info">
-                <h3>Kipas Sirkulasi</h3>
-                <div id="kipas" class="status-badge off">OFF</div>
+                <h3>Motor Stepper AC</h3>
+                <div id="motor" class="status-badge off">OFF</div>
             </div>
         </div>
 
         <div class="card status-card">
-            <div class="status-icon">⬇️</div>
+            <div class="status-icon">📋</div>
             <div class="status-info">
-                <h3>Setpoint Minimum</h3>
-                <div id="lowVal" class="setpoint-value">--</div>
+                <h3>Setpoint LOW</h3>
+                <div id="lowVal" class="setpoint-value">36.0</div>
                 <span class="unit">°C</span>
             </div>
         </div>
 
         <div class="card status-card">
-            <div class="status-icon">⬆️</div>
+            <div class="status-icon">📋</div>
             <div class="status-info">
-                <h3>Setpoint Maksimum</h3>
-                <div id="highVal" class="setpoint-value">--</div>
+                <h3>Setpoint HIGH</h3>
+                <div id="highVal" class="setpoint-value">37.6</div>
                 <span class="unit">°C</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Motor Info Card -->
+    <div class="card info-card">
+        <div class="card-header">
+            <h2>🔧 Motor Stepper Information</h2>
+            <span class="control-badge">Automatic Cycle</span>
+        </div>
+        <div class="motor-info">
+            <div class="info-item">
+                <span class="info-label">Mode Operasi:</span>
+                <span class="info-value">AUTO - Menyala 2 jam, Mati 2 jam (berulang)</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Siklus:</span>
+                <span class="info-value">2 Jam ON → 2 Jam OFF → 2 Jam ON → ...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Status Saat Ini:</span>
+                <span id="motorStatusText" class="info-value status-text">Standby</span>
             </div>
         </div>
     </div>
@@ -101,8 +185,11 @@
         <div class="manual-buttons">
             <button id="lampOnBtn" class="manual-btn lamp-on">💡 Lampu ON</button>
             <button id="lampOffBtn" class="manual-btn lamp-off">💡 Lampu OFF</button>
-            <button id="fanOnBtn" class="manual-btn fan-on">🌀 Kipas ON</button>
-            <button id="fanOffBtn" class="manual-btn fan-off">🌀 Kipas OFF</button>
+            <button id="motorOnBtn" class="manual-btn motor-on">⚙️ Motor ON</button>
+            <button id="motorOffBtn" class="manual-btn motor-off">⚙️ Motor OFF</button>
+        </div>
+        <div class="manual-note">
+            <small>⚠️ Mode MANUAL: Motor stepper dikontrol manual tanpa batas waktu</small>
         </div>
     </div>
 
@@ -152,6 +239,14 @@
             <div class="status-item">
                 <span class="status-label">📊 Data Points:</span>
                 <span class="status-value" id="dataPoints">0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">⚙️ Motor Cycle:</span>
+                <span class="status-value">2 Hours ON / 2 Hours OFF</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">🕐 Last Message:</span>
+                <span class="status-value" id="lastMessageTime">--:--:--</span>
             </div>
         </div>
     </div>

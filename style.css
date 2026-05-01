@@ -57,11 +57,17 @@ body {
     font-family: monospace;
 }
 
+.status-group {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
 .connection-badge {
     display: inline-block;
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
@@ -76,6 +82,80 @@ body {
     background: rgba(239, 68, 68, 0.2);
     color: #f87171;
     border: 1px solid #f87171;
+}
+
+.esp32-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.esp32-badge.online {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid #4ade80;
+}
+
+.esp32-badge.offline {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid #f87171;
+}
+
+/* Status Summary Cards */
+.status-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background: rgba(15, 25, 45, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-icon {
+    font-size: 32px;
+}
+
+.summary-info {
+    flex: 1;
+}
+
+.summary-info h4 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-bottom: 5px;
+}
+
+.summary-status {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.summary-status.online {
+    color: #4ade80;
+}
+
+.summary-status.offline {
+    color: #f87171;
+}
+
+.summary-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #60a5fa;
 }
 
 /* Card Styles */
@@ -162,6 +242,88 @@ body {
     color: #f59e0b;
 }
 
+/* Cycle Card */
+.cycle-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.05));
+}
+
+.cycle-badge {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.cycle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cycle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.cycle-label {
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.cycle-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.cycle-value.phase-on {
+    color: #22c55e;
+}
+
+.cycle-value.phase-off {
+    color: #ef4444;
+}
+
+.cycle-timer {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: monospace;
+    color: #f59e0b;
+}
+
+.cycle-progress {
+    margin-top: 10px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+}
+
+.progress-bar-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    overflow: hidden;
+    height: 8px;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #22c55e, #3b82f6);
+    width: 0%;
+    height: 100%;
+    transition: width 1s linear;
+}
+
 /* Temperature Card */
 .temp-card {
     height: auto;
@@ -188,7 +350,7 @@ body {
     color: #94a3b8;
 }
 
-/* CHART CONTAINER */
+/* Chart Container */
 .chart-container {
     position: relative;
     width: 100%;
@@ -276,6 +438,40 @@ body {
     color: #94a3b8;
 }
 
+/* Info Card */
+.info-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+}
+
+.motor-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.info-item {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.info-label {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.status-text {
+    color: #f59e0b;
+}
+
 /* Manual Control Card */
 .manual-control-card {
     background: rgba(245, 158, 11, 0.1);
@@ -286,6 +482,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
+    margin-bottom: 15px;
 }
 
 .manual-btn {
@@ -298,12 +495,18 @@ body {
     transition: all 0.3s ease;
 }
 
+.manual-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
 .lamp-on {
     background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white;
 }
 
-.lamp-on:hover {
+.lamp-on:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
 }
@@ -313,27 +516,37 @@ body {
     color: white;
 }
 
-.lamp-off:hover {
+.lamp-off:hover:not(:disabled) {
     transform: translateY(-2px);
 }
 
-.fan-on {
+.motor-on {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
 }
 
-.fan-on:hover {
+.motor-on:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
 }
 
-.fan-off {
+.motor-off {
     background: linear-gradient(135deg, #6b7280, #4b5563);
     color: white;
 }
 
-.fan-off:hover {
+.motor-off:hover:not(:disabled) {
     transform: translateY(-2px);
+}
+
+.manual-note {
+    text-align: center;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.manual-note small {
+    color: #f59e0b;
 }
 
 /* Control Panel */
@@ -404,9 +617,14 @@ body {
     gap: 8px;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -456,6 +674,30 @@ body {
     font-weight: 600;
 }
 
+/* Warning overlay when ESP32 offline */
+.offline-overlay {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(239, 68, 68, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header {
@@ -466,6 +708,14 @@ body {
     
     .time-section {
         text-align: center;
+    }
+    
+    .status-group {
+        justify-content: center;
+    }
+    
+    .status-summary {
+        grid-template-columns: 1fr 1fr;
     }
     
     .grid {
@@ -490,5 +740,13 @@ body {
     
     .manual-buttons {
         grid-template-columns: 1fr 1fr;
+    }
+    
+    .motor-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .cycle-timer {
+        font-size: 18px;
     }
 }

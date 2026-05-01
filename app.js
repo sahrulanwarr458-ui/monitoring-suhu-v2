@@ -111,8 +111,7 @@ function updateModeUI(mode) {
     }
 }
 
-// ===== SEND MANUAL COMMAND =====
-function sendManualCommand(device, state) {
+/function sendManualCommand(device, state) {
     if (!client.connected) {
         showNotification("MQTT not connected", "error");
         return;
@@ -122,13 +121,19 @@ function sendManualCommand(device, state) {
         showNotification("Please switch to MANUAL mode first", "error");
         return;
     }
-    
+
     const topic = `inkubator/manual/${device}`;
+
+    // 🔥 LANGSUNG UBAH TAMPILAN (INI KUNCINYA)
+    if (device === "lamp") {
+        updateStatus("lampu", state);
+    } else if (device === "fan") {
+        updateStatus("kipas", state);
+    }
+
     client.publish(topic, state, (err) => {
         if (err) {
             showNotification(`Failed to control ${device}`, "error");
-        } else {
-            showNotification(`${device.toUpperCase()} turned ${state}`, "success");
         }
     });
 }

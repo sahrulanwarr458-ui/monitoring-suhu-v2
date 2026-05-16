@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Incubator Pro - Motor Stepper Control (2 Jam ON / 2 Jam OFF)</title>
+<title>Smart Incubator Pro - Motor Stepper 1x Sehari 10 Detik</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,11 +12,11 @@
 <body>
 
 <div class="container">
-    <!-- Header -->
+
     <div class="header">
         <div class="title-section">
             <h1>🥚 SMART INCUBATOR PRO</h1>
-            <p class="subtitle">Real-time Monitoring & Control System | Motor: 2 Jam ON / 2 Jam OFF</p>
+            <p class="subtitle">Real-time Monitoring & Control System | Motor: 1x Sehari / 10 Detik</p>
         </div>
         <div class="time-section">
             <div id="currentTime" class="time-display"></div>
@@ -27,7 +27,6 @@
         </div>
     </div>
 
-    <!-- Status Summary Cards -->
     <div class="grid status-summary">
         <div class="card summary-card">
             <div class="summary-icon">📡</div>
@@ -36,6 +35,7 @@
                 <div id="mqttStatusText" class="summary-status offline">Disconnected</div>
             </div>
         </div>
+
         <div class="card summary-card">
             <div class="summary-icon">🔌</div>
             <div class="summary-info">
@@ -43,6 +43,7 @@
                 <div id="esp32StatusText" class="summary-status offline">Offline</div>
             </div>
         </div>
+
         <div class="card summary-card">
             <div class="summary-icon">⏱️</div>
             <div class="summary-info">
@@ -50,6 +51,7 @@
                 <div id="lastHeartbeat" class="summary-value">--:--:--</div>
             </div>
         </div>
+
         <div class="card summary-card">
             <div class="summary-icon">📊</div>
             <div class="summary-info">
@@ -59,35 +61,37 @@
         </div>
     </div>
 
-    <!-- Mode Control Card -->
     <div class="card mode-card">
         <div class="card-header">
             <h2>🎮 Control Mode</h2>
             <div class="mode-toggle-container">
-                <button id="autoModeBtn" class="mode-btn active">AUTO MODE (2H ON / 2H OFF)</button>
+                <button id="autoModeBtn" class="mode-btn active">AUTO MODE (1x SEHARI / 10 DETIK)</button>
                 <button id="manualModeBtn" class="mode-btn">MANUAL MODE</button>
             </div>
         </div>
+
         <div id="currentModeDisplay" class="mode-display">
             Current Mode: <span id="modeStatus" class="mode-status auto">AUTO</span>
         </div>
     </div>
 
-    <!-- Motor Cycle Info Card -->
     <div class="card cycle-card">
         <div class="card-header">
             <h2>🔄 Motor Stepper Cycle</h2>
-            <span class="cycle-badge active">2 HOURS ON / 2 HOURS OFF</span>
+            <span class="cycle-badge active">1x SEHARI / 10 DETIK</span>
         </div>
+
         <div class="cycle-info">
             <div class="cycle-item">
                 <span class="cycle-label">Current Phase:</span>
                 <span id="motorCyclePhase" class="cycle-value phase-off">OFF</span>
             </div>
+
             <div class="cycle-item">
                 <span class="cycle-label">Time Remaining in Current Phase:</span>
                 <span id="motorTimer" class="cycle-timer">--:--:--</span>
             </div>
+
             <div class="cycle-progress">
                 <div class="progress-label">
                     <span>OFF Phase</span>
@@ -100,7 +104,6 @@
         </div>
     </div>
 
-    <!-- Temperature Card -->
     <div class="card big temp-card">
         <div class="card-header">
             <h2>🌡️ Temperature Monitoring</h2>
@@ -109,16 +112,27 @@
                 <span class="temp-unit">°C</span>
             </div>
         </div>
+
         <div class="chart-container">
             <canvas id="tempChart"></canvas>
         </div>
+
         <div class="chart-controls">
             <button onclick="resetChart()" class="btn-secondary">Reset Chart</button>
         </div>
     </div>
 
-    <!-- Status Grid -->
     <div class="grid status-grid">
+
+        <div class="card status-card">
+            <div class="status-icon">💧</div>
+            <div class="status-info">
+                <h3>Kelembapan</h3>
+                <div id="humidityVal" class="setpoint-value">--</div>
+                <span class="unit">%</span>
+            </div>
+        </div>
+
         <div class="card status-card">
             <div class="status-icon">💡</div>
             <div class="status-info">
@@ -152,23 +166,26 @@
                 <span class="unit">°C</span>
             </div>
         </div>
+
     </div>
 
-    <!-- Motor Info Card -->
     <div class="card info-card">
         <div class="card-header">
             <h2>🔧 Motor Stepper Information</h2>
             <span class="control-badge">Automatic Cycle</span>
         </div>
+
         <div class="motor-info">
             <div class="info-item">
                 <span class="info-label">Mode Operasi:</span>
-                <span class="info-value">AUTO - Menyala 2 jam, Mati 2 jam (berulang)</span>
+                <span class="info-value">AUTO - Menyala 1 hari sekali selama 10 detik</span>
             </div>
+
             <div class="info-item">
                 <span class="info-label">Siklus:</span>
-                <span class="info-value">2 Jam ON → 2 Jam OFF → 2 Jam ON → ...</span>
+                <span class="info-value">Motor hidup otomatis 1 hari sekali selama 10 detik</span>
             </div>
+
             <div class="info-item">
                 <span class="info-label">Status Saat Ini:</span>
                 <span id="motorStatusText" class="info-value status-text">Standby</span>
@@ -176,31 +193,32 @@
         </div>
     </div>
 
-    <!-- Manual Control Panel (only visible in MANUAL mode) -->
     <div id="manualPanel" class="card manual-control-card" style="display: none;">
         <div class="card-header">
             <h2>🕹️ Manual Control Panel</h2>
             <span class="control-badge">Manual Override Active</span>
         </div>
+
         <div class="manual-buttons">
             <button id="lampOnBtn" class="manual-btn lamp-on">💡 Lampu ON</button>
             <button id="lampOffBtn" class="manual-btn lamp-off">💡 Lampu OFF</button>
             <button id="motorOnBtn" class="manual-btn motor-on">⚙️ Motor ON</button>
             <button id="motorOffBtn" class="manual-btn motor-off">⚙️ Motor OFF</button>
         </div>
+
         <div class="manual-note">
             <small>⚠️ Mode MANUAL: Motor stepper dikontrol manual tanpa batas waktu</small>
         </div>
     </div>
 
-    <!-- Control Panel -->
     <div class="card control-card">
         <div class="card-header">
             <h2>⚙️ Setpoint Control</h2>
             <span class="control-badge">Temperature Settings</span>
         </div>
-        
+
         <div class="control-group">
+
             <div class="control-item">
                 <label>Setpoint LOW (°C)</label>
                 <div class="input-group">
@@ -222,34 +240,41 @@
                 </div>
                 <small class="input-hint">Suhu tertinggi untuk inkubator</small>
             </div>
+
         </div>
     </div>
 
-    <!-- System Status -->
     <div class="card system-card">
         <div class="system-status">
+
             <div class="status-item">
                 <span class="status-label">📡 MQTT Broker:</span>
                 <span class="status-value">HiveMQ Cloud</span>
             </div>
+
             <div class="status-item">
                 <span class="status-label">🆔 Client ID:</span>
                 <span class="status-value" id="clientId">--</span>
             </div>
+
             <div class="status-item">
                 <span class="status-label">📊 Data Points:</span>
                 <span class="status-value" id="dataPoints">0</span>
             </div>
+
             <div class="status-item">
                 <span class="status-label">⚙️ Motor Cycle:</span>
-                <span class="status-value">2 Hours ON / 2 Hours OFF</span>
+                <span class="status-value">1x Sehari / 10 Detik</span>
             </div>
+
             <div class="status-item">
                 <span class="status-label">🕐 Last Message:</span>
                 <span class="status-value" id="lastMessageTime">--:--:--</span>
             </div>
+
         </div>
     </div>
+
 </div>
 
 <script src="app.js"></script>
